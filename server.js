@@ -99,8 +99,16 @@ function importExcelData() {
   return clients;
 }
 
-// Populate database with Excel data
+// Populate database with Excel data (only runs if Excel file exists)
 function populateDatabase() {
+  const excelPath = 'C:\\Users\\think\\Downloads\\Copy of Transitions.xlsm.xlsx';
+  
+  // Check if Excel file exists (only on local machine)
+  if (!fs.existsSync(excelPath)) {
+    console.log('Excel file not found, skipping import. Database will use existing data or start fresh.');
+    return;
+  }
+  
   const clients = importExcelData();
   
   db.run('DELETE FROM clients');
