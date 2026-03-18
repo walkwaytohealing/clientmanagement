@@ -240,6 +240,7 @@ const loginPage = `<!DOCTYPE html>
 <html>
 <head>
   <title>Walkway PHP - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
@@ -249,6 +250,7 @@ const loginPage = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
     .login-box {
       background: white;
@@ -268,6 +270,7 @@ const loginPage = `<!DOCTYPE html>
       border-radius: 8px;
       font-size: 16px;
       transition: border-color 0.3s;
+      -webkit-appearance: none;
     }
     input:focus { outline: none; border-color: #4a90d9; }
     button {
@@ -281,9 +284,20 @@ const loginPage = `<!DOCTYPE html>
       font-weight: 600;
       cursor: pointer;
       transition: background 0.3s;
+      -webkit-appearance: none;
+      touch-action: manipulation;
     }
     button:hover { background: #357abd; }
+    button:active { transform: scale(0.98); }
     .error { color: #e74c3c; margin-top: 15px; text-align: center; }
+    
+    @media (max-width: 480px) {
+      body { padding: 15px; }
+      .login-box { padding: 30px 20px; }
+      h1 { font-size: 22px; }
+      .subtitle { font-size: 14px; }
+      input, button { font-size: 16px; padding: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -303,61 +317,68 @@ const mainPage = `<!DOCTYPE html>
 <html>
 <head>
   <title>Walkway PHP - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f7fa;
       min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
     }
     .header {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: white;
-      padding: 20px 30px;
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .header h1 { font-size: 24px; }
-    .header .nav { display: flex; gap: 20px; align-items: center; }
-    .header a { color: white; text-decoration: none; opacity: 0.8; }
+    .header h1 { font-size: 20px; white-space: nowrap; }
+    .header .nav { display: flex; gap: 15px; align-items: center; }
+    .header a { color: white; text-decoration: none; opacity: 0.8; font-size: 14px; }
     .header a:hover { opacity: 1; }
-    .container { padding: 30px; max-width: 1400px; margin: 0 auto; }
+    .container { padding: 15px; max-width: 1400px; margin: 0 auto; }
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
     }
     .stat-card {
       background: white;
-      padding: 25px;
-      border-radius: 12px;
+      padding: 15px;
+      border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
-    .stat-card h3 { color: #666; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
-    .stat-card .number { font-size: 36px; font-weight: 700; color: #1a1a2e; }
+    .stat-card h3 { color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; }
+    .stat-card .number { font-size: 24px; font-weight: 700; color: #1a1a2e; }
     .stat-card.active .number { color: #27ae60; }
     .stat-card.meetings .number { color: #e74c3c; }
     .filters {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
       display: flex;
-      gap: 15px;
+      gap: 10px;
       flex-wrap: wrap;
       align-items: center;
     }
     .filters input, .filters select {
-      padding: 10px 15px;
+      padding: 10px 12px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       font-size: 14px;
+      flex: 1;
+      min-width: 140px;
+      -webkit-appearance: none;
     }
     .filters input:focus, .filters select:focus { outline: none; border-color: #4a90d9; }
     .btn {
-      padding: 10px 20px;
+      padding: 10px 16px;
       background: #4a90d9;
       color: white;
       border: none;
@@ -366,56 +387,108 @@ const mainPage = `<!DOCTYPE html>
       font-size: 14px;
       text-decoration: none;
       display: inline-block;
+      touch-action: manipulation;
+      -webkit-appearance: none;
     }
     .btn:hover { background: #357abd; }
+    .btn:active { transform: scale(0.98); }
     .btn-success { background: #27ae60; }
     .btn-success:hover { background: #219a52; }
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
     table {
       width: 100%;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      min-width: 800px;
       border-collapse: collapse;
+      font-size: 13px;
     }
     th {
       background: #1a1a2e;
       color: white;
-      padding: 15px;
+      padding: 12px 10px;
       text-align: left;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 11px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     td {
-      padding: 15px;
+      padding: 12px 10px;
       border-bottom: 1px solid #eee;
     }
     tr:hover { background: #f8f9fa; }
     .days-badge {
       display: inline-block;
-      padding: 5px 12px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
+      white-space: nowrap;
     }
     .days-early { background: #d4edda; color: #155724; }
     .days-mid { background: #fff3cd; color: #856404; }
     .days-late { background: #f8d7da; color: #721c24; }
     .meeting-soon { background: #e74c3c; color: white; }
     .comment-cell {
-      max-width: 200px;
+      max-width: 150px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .actions { display: flex; gap: 10px; }
-    .actions a { color: #4a90d9; text-decoration: none; }
-    .actions a:hover { text-decoration: underline; }
+    .actions { display: flex; gap: 8px; }
+    .actions a { 
+      color: #4a90d9; 
+      text-decoration: none; 
+      padding: 6px 12px;
+      border: 1px solid #4a90d9;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .actions a:hover { background: #4a90d9; color: white; }
     .empty-state {
       text-align: center;
-      padding: 60px;
+      padding: 40px;
       color: #666;
+    }
+    
+    @media (min-width: 768px) {
+      .header { padding: 20px 30px; }
+      .header h1 { font-size: 24px; }
+      .header a { font-size: 16px; }
+      .container { padding: 30px; }
+      .stats {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .stat-card { padding: 25px; }
+      .stat-card h3 { font-size: 14px; }
+      .stat-card .number { font-size: 36px; }
+      .filters { padding: 20px; margin-bottom: 20px; }
+      .filters input, .filters select { min-width: auto; }
+      .btn { padding: 10px 20px; }
+      table { min-width: auto; font-size: 14px; }
+      th { padding: 15px; font-size: 13px; }
+      td { padding: 15px; }
+      .days-badge { padding: 5px 12px; font-size: 12px; }
+      .comment-cell { max-width: 200px; }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 { font-size: 16px; }
+      .header .nav { gap: 10px; }
+      .header a { font-size: 12px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat-card { padding: 12px; }
+      .stat-card h3 { font-size: 10px; }
+      .stat-card .number { font-size: 20px; }
+      .filters input, .filters select { font-size: 16px; }
+      .btn { font-size: 14px; padding: 10px 14px; }
     }
   </style>
 </head>
@@ -462,26 +535,28 @@ const mainPage = `<!DOCTYPE html>
       <a href="/client/new" class="btn btn-success">+ Add Client</a>
     </div>
     
-    <table id="clientsTable">
-      <thead>
-        <tr>
-          <th>Client</th>
-          <th>House</th>
-          <th>Intake</th>
-          <th>Days In</th>
-          <th>28 Day</th>
-          <th>45 Day</th>
-          <th>60 Day</th>
-          <th>Location</th>
-          <th>Meeting/IOP</th>
-          <th>Comments</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{CLIENT_ROWS}}
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table id="clientsTable">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>House</th>
+            <th>Intake</th>
+            <th>Days</th>
+            <th>28 Day</th>
+            <th>45 Day</th>
+            <th>60 Day</th>
+            <th>Location</th>
+            <th>Meeting</th>
+            <th>Notes</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{CLIENT_ROWS}}
+        </tbody>
+      </table>
+    </div>
   </div>
   
   <script>
@@ -572,41 +647,46 @@ const editClientPage = `<!DOCTYPE html>
 <html>
 <head>
   <title>{{TITLE}} - Walkway PHP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f7fa;
       min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
     }
     .header {
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: white;
-      padding: 20px 30px;
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .header h1 { font-size: 24px; }
-    .header .nav { display: flex; gap: 20px; align-items: center; }
-    .header a { color: white; text-decoration: none; opacity: 0.8; }
+    .header h1 { font-size: 18px; white-space: nowrap; }
+    .header .nav { display: flex; gap: 15px; align-items: center; }
+    .header a { color: white; text-decoration: none; opacity: 0.8; font-size: 14px; }
     .header a:hover { opacity: 1; }
-    .container { padding: 30px; max-width: 800px; margin: 0 auto; }
+    .container { padding: 15px; max-width: 800px; margin: 0 auto; }
     .card {
       background: white;
-      padding: 30px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
-    .card h2 { margin-bottom: 25px; color: #1a1a2e; }
+    .card h2 { margin-bottom: 20px; color: #1a1a2e; font-size: 20px; }
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     .form-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 600;
       color: #333;
+      font-size: 14px;
     }
     .form-group input,
     .form-group select,
@@ -615,8 +695,9 @@ const editClientPage = `<!DOCTYPE html>
       padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 16px;
       font-family: inherit;
+      -webkit-appearance: none;
     }
     .form-group input:focus,
     .form-group select:focus,
@@ -625,16 +706,16 @@ const editClientPage = `<!DOCTYPE html>
       border-color: #4a90d9;
     }
     .form-group textarea {
-      min-height: 100px;
+      min-height: 80px;
       resize: vertical;
     }
     .form-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: 1fr;
+      gap: 15px;
     }
     .btn {
-      padding: 12px 30px;
+      padding: 12px 20px;
       background: #4a90d9;
       color: white;
       border: none;
@@ -642,8 +723,15 @@ const editClientPage = `<!DOCTYPE html>
       cursor: pointer;
       font-size: 16px;
       font-weight: 600;
+      touch-action: manipulation;
+      -webkit-appearance: none;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn:hover { background: #357abd; }
+    .btn:active { transform: scale(0.98); }
     .btn-success { background: #27ae60; }
     .btn-success:hover { background: #219a52; }
     .btn-danger { background: #e74c3c; }
@@ -652,40 +740,68 @@ const editClientPage = `<!DOCTYPE html>
     .btn-secondary:hover { background: #7f8c8d; }
     .actions {
       display: flex;
-      gap: 15px;
-      margin-top: 30px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 25px;
       padding-top: 20px;
       border-top: 1px solid #eee;
     }
     .error {
       background: #f8d7da;
       color: #721c24;
-      padding: 15px;
+      padding: 12px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
     .success {
       background: #d4edda;
       color: #155724;
-      padding: 15px;
+      padding: 12px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
     .date-note {
       font-size: 12px;
       color: #666;
-      margin-top: 5px;
+      margin-top: 4px;
     }
     .danger-zone {
-      margin-top: 30px;
-      padding: 20px;
+      margin-top: 25px;
+      padding: 15px;
       background: #fdf2f2;
       border: 1px solid #f5c6cb;
       border-radius: 8px;
     }
     .danger-zone h3 {
       color: #721c24;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .danger-zone p {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    @media (min-width: 768px) {
+      .header { padding: 20px 30px; }
+      .header h1 { font-size: 24px; }
+      .header a { font-size: 16px; }
+      .container { padding: 30px; }
+      .card { padding: 30px; }
+      .card h2 { font-size: 24px; margin-bottom: 25px; }
+      .form-group { margin-bottom: 20px; }
+      .form-group label { font-size: 16px; }
+      .form-row { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+      .actions { flex-direction: row; gap: 15px; }
+      .btn { width: auto; padding: 12px 30px; }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 { font-size: 16px; }
+      .card { padding: 15px; }
+      .card h2 { font-size: 18px; }
     }
   </style>
 </head>
