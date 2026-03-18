@@ -1,0 +1,17 @@
+{
+  "name": "walkway-php-client-management",
+  "version": "1.0.0",
+  "description": "Client management system for Walkway to Healing PHP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npm install"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
