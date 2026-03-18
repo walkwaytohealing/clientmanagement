@@ -99,13 +99,76 @@ function importExcelData() {
   return clients;
 }
 
-// Populate database with Excel data (only runs if Excel file exists)
+// Decrypt and load embedded client data
+function loadEncryptedData() {
+  try {
+    const encryptedFile = path.join(__dirname, 'clients.enc');
+    if (!fs.existsSync(encryptedFile)) {
+      console.log('No encrypted data file found');
+      return null;
+    }
+    
+    const key = process.env.ENCRYPTION_KEY;
+    const iv = process.env.ENCRYPTION_IV;
+    
+    if (!key || !iv) {
+      console.log('No encryption keys found in environment');
+      return null;
+    }
+    
+    const encrypted = fs.readFileSync(encryptedFile, 'utf8');
+    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'hex'), Buffer.from(iv, 'hex'));
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    
+    return JSON.parse(decrypted);
+  } catch (err) {
+    console.error('Failed to decrypt data:', err.message);
+    return null;
+  }
+}
+
+// Populate database with encrypted data or Excel data
 function populateDatabase() {
-  const excelPath = 'C:\\Users\\think\\Downloads\\Copy of Transitions.xlsm.xlsx';
+  // First try encrypted data (for production)
+  const encryptedClients = loadEncryptedData();
+  if (encryptedClients && encryptedClients.length > 0) {
+    console.log(`Loading ${encryptedClients.length} clients from encrypted store...`);
+    
+    db.get('SELECT COUNT(*) as count FROM clients', (err, row) => {
+      if (err || row.count > 0) {
+        console.log('Database already has data, skipping import');
+        return;
+      }
+      
+      const stmt = db.prepare(`INSERT INTO clients 
+        (name, house, intake_date, day_28, day_45, day_60, location, meeting_iop, comments) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      
+      encryptedClients.forEach(client => {
+        stmt.run(
+          client.name,
+          client.house,
+          client.intake_date,
+          client.day_28,
+          client.day_45,
+          client.day_60,
+          client.location,
+          client.meeting_iop,
+          client.comments
+        );
+      });
+      
+      stmt.finalize();
+      console.log(`Imported ${encryptedClients.length} clients from encrypted store`);
+    });
+    return;
+  }
   
-  // Check if Excel file exists (only on local machine)
+  // Fall back to Excel (for local development only)
+  const excelPath = 'C:\\Users\\think\\Downloads\\Copy of Transitions.xlsm.xlsx';
   if (!fs.existsSync(excelPath)) {
-    console.log('Excel file not found, skipping import. Database will use existing data or start fresh.');
+    console.log('No data source found. Starting with empty database.');
     return;
   }
   
@@ -133,7 +196,7 @@ function populateDatabase() {
   });
   
   stmt.finalize();
-  console.log(`Imported ${clients.length} clients`);
+  console.log(`Imported ${clients.length} clients from Excel`);
 }
 
 // Auth middleware
